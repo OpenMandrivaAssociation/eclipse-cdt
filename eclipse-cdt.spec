@@ -18,7 +18,7 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        %mkrel 0.4.1
+Release:        %mkrel 0.4.2
 License:        Eclipse Public License
 Group:          Development/Java
 URL:            http://www.eclipse.org/cdt/
@@ -101,8 +101,6 @@ BuildRequires: eclipse-pde
 %if %{gcj_support}
 BuildRequires:  java-gcj-compat-devel
 BuildRequires:  unzip
-Requires(post):   java-gcj-compat
-Requires(postun): java-gcj-compat
 %else
 BuildRequires:  java-devel
 %endif
