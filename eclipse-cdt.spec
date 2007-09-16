@@ -18,7 +18,7 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        %mkrel 0.4.2
+Release:        %mkrel 0.4.3
 License:        Eclipse Public License
 Group:          Development/Java
 URL:            http://www.eclipse.org/cdt/
@@ -307,10 +307,10 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %if %{gcj_support}
 %post
-%{_bindir}/rebuild-gcj-db
+%{update_gcjdb}
 
 %postun
-%{_bindir}/rebuild-gcj-db
+%{clean_gcjdb}
 %endif
 
 %files
