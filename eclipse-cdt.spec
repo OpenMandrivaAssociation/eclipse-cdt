@@ -18,10 +18,10 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        %mkrel 0.4.3
+Release:        %mkrel 0.7.1
 License:        Eclipse Public License
 Group:          Development/Java
-URL:            http://www.eclipse.org/cdt/
+URL:            http://www.eclipse.org/cdt
 Requires:       eclipse-platform
 
 
@@ -62,7 +62,7 @@ Requires:       eclipse-platform
 
 Source0: %{name}-fetched-src-CDT_4_0_0.tar.bz2
 
-Source1: http://sources.redhat.com/eclipse/autotools/eclipse-cdt-fetched-src-autotools-0_9_2.tar.gz
+Source1: http://sources.redhat.com/eclipse/autotools/eclipse-cdt-fetched-src-autotools-0_9_3.tar.gz
 
 # The following tarball was generated thusly:
 #
@@ -99,13 +99,16 @@ Patch11: %{name}-cppunit-env-tab.patch
 
 BuildRequires: eclipse-pde
 %if %{gcj_support}
-BuildRequires:  java-gcj-compat-devel
-BuildRequires:  unzip
+BuildRequires:  gcc-java >= 4.0.2
+BuildRequires:  java-gcj-compat-devel >= 1.0.64
+BuildRequires:  unzip >= 5.52
+Requires(post):   java-gcj-compat >= 1.0.64
+Requires(postun): java-gcj-compat >= 1.0.64
 %else
 BuildRequires:  java-devel
 %endif
 
-Requires:       gdb make gcc-c++ autoconf automake
+Requires:       gdb make gcc-c++ autoconf automake eclipse-cvs-client
 Requires:       eclipse-platform >= 1:3.3.0
 
 # Currently, upstream CDT only supports building on the platforms listed here.
@@ -114,7 +117,7 @@ ExclusiveArch: %{ix86} x86_64 ppc ia64
 %else
 ExclusiveArch: %{ix86} x86_64 ppc ia64
 %endif
-BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root 
+BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %package sdk
 Summary:        Eclipse C/C++ Development Tools (CDT) SDK plugin
@@ -197,8 +200,6 @@ pushd org.eclipse.cdt.releng/results/plugins/org.eclipse.cdt.core.linux/library
 make JAVA_HOME="%{java_home}" ARCH=%{eclipse_arch} CC='gcc -D_GNU_SOURCE'
 popd
 
-export CLASSPATH=$(build-classpath commons-logging jetty5)
-
 # Call eclipse headless to process CDT releng build scripts
 pushd org.eclipse.cdt.releng 
 %{java} -cp $SDK/startup.jar \
@@ -260,6 +261,14 @@ unzip org.eclipse.cdt.releng/results/I.*/cdt-master-*.zip \
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/features/org.eclipse.cdt.testing*
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/features/org.eclipse.cdt.master*
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/features/org.eclipse.cdt.debug.gdbjtag*
+
+# Unpack all existing feature jars
+for x in ${RPM_BUILD_ROOT}/%{eclipse_base}/features/*.jar; do
+  dirname=`echo $x | sed -e 's:\\(.*\\)\\.jar:\\1:g'`
+  mkdir -p $dirname
+  unzip $x -d $dirname
+  rm $x
+done 
 
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.testing*
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.debug.gdbjtag*
