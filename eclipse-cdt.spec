@@ -4,7 +4,7 @@ Epoch: 1
 %define major                   4
 %define minor                   0       
 %define majmin                  %{major}.%{minor}
-%define micro                   0
+%define micro                   1
 %define eclipse_base            %{_datadir}/eclipse
 %define eclipse_lib_base        %{_libdir}/eclipse
 
@@ -18,7 +18,7 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        %mkrel 0.7.1
+Release:        %mkrel 0.1.1
 License:        Eclipse Public License
 Group:          Development/Java
 URL:            http://www.eclipse.org/cdt
@@ -31,19 +31,20 @@ Requires:       eclipse-platform
 # mkdir -p temp && cd temp
 # mkdir -p home
 # rm -rf org.eclipse.cdt-releng
-# cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools export -r CDT_4_0_0 org.eclipse.cdt-releng/org.eclipse.cdt.releng
+# cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools export -r CDT_4_0_1 org.eclipse.cdt-releng/org.eclipse.cdt.releng
 # cd org.eclipse.cdt-releng/org.eclipse.cdt.releng/
 # sed --in-place 's/home/cvsroot/' maps/cdt.map
 # sed --in-place -e'81,81i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">\n\t\t\t<property name="builder" value="${basedir}/master"/>\n\t\t</ant>' build.xml
 # sed --in-place -e'81,81i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">\n\t\t\t<property name="builder" value="${basedir}/testing"/>\n\t\t</ant>' build.xml
 # sed --in-place -e'63,63i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">\n\t\t\t<property name="builder" value="${basedir}/master"/>\n\t\t</ant>' build.xml
 # sed --in-place -e'63,63i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">\n\t\t\t<property name="builder" value="${basedir}/testing"/>\n\t\t</ant>' build.xml
-# sed --in-place -e'124,126d' build.xml
+## Remove lpgjavaruntime jar reference
+# sed --in-place -e'127,129d' build.xml
 # eclipse -nosplash -Duser.home=../../home \
 #   -application org.eclipse.ant.core.antRunner \
 #   -buildfile build.xml -DbaseLocation=/usr/share/eclipse \
 #   -Dpde.build.scripts=/usr/share/eclipse/plugins/org.eclipse.pde.build/scripts \
-#   -DcdtTag=CDT_4_0_0 \
+#   -DcdtTag=CDT_4_0_1 \
 #   -DdontUnzip=true fetch
 # find . -name net.*.jar -exec rm {} \;
 # pushd results/features
@@ -58,11 +59,11 @@ Requires:       eclipse-platform
 # sed --in-place -e "44,47d" feature.xml
 # sed --in-place -e "24,31d" feature.xml
 # popd
-# cd .. && tar jcf eclipse-cdt-fetched-src-CDT_4_0_0.tar.bz2 org.eclipse.cdt.releng
+# cd .. && tar jcf eclipse-cdt-fetched-src-CDT_4_0_1.tar.bz2 org.eclipse.cdt.releng
 
-Source0: %{name}-fetched-src-CDT_4_0_0.tar.bz2
+Source0: %{name}-fetched-src-CDT_4_0_1.tar.bz2
 
-Source1: http://sources.redhat.com/eclipse/autotools/eclipse-cdt-fetched-src-autotools-0_9_3.tar.gz
+Source1: http://sources.redhat.com/eclipse/autotools/eclipse-cdt-fetched-src-autotools-0_9_5.tar.gz
 
 # The following tarball was generated thusly:
 #
@@ -105,7 +106,7 @@ BuildRequires:  unzip >= 5.52
 Requires(post):   java-gcj-compat >= 1.0.64
 Requires(postun): java-gcj-compat >= 1.0.64
 %else
-BuildRequires:  java-devel
+BuildRequires:  java-devel >= 1.4.2
 %endif
 
 Requires:       gdb make gcc-c++ autoconf automake eclipse-cvs-client
@@ -287,7 +288,7 @@ rm ${RPM_BUILD_ROOT}%{eclipse_base}/pack.properties
 mkdir -p ${RPM_BUILD_ROOT}%{_libdir}/eclipse
 pushd ${RPM_BUILD_ROOT}
 mkdir -p .%{_libdir}/eclipse/plugins
-for archplugin in $(find .%{eclipse_base}/plugins -name \*%{eclipse_arch}_%{version}\*); do
+for archplugin in $(find .%{eclipse_base}/plugins -name \*%{eclipse_arch}_%{majmin}\*); do
   mv $archplugin .%{_libdir}/eclipse/plugins
   chmod -R 755 .%{_libdir}/eclipse/plugins/$(basename $archplugin)
 done
