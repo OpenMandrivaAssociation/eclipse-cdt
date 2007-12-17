@@ -118,7 +118,6 @@ ExclusiveArch: %{ix86} x86_64 ppc ia64
 %else
 ExclusiveArch: %{ix86} x86_64 ppc ia64
 %endif
-BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %package sdk
 Summary:        Eclipse C/C++ Development Tools (CDT) SDK plugin
