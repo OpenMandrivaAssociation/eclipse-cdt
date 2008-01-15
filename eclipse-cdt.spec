@@ -18,7 +18,7 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        %mkrel 0.1.1
+Release:        %mkrel 0.1.2
 License:        Eclipse Public License
 Group:          Development/Java
 URL:            http://www.eclipse.org/cdt
@@ -100,14 +100,9 @@ Patch11: %{name}-cppunit-env-tab.patch
 
 BuildRequires: eclipse-pde
 %if %{gcj_support}
-BuildRequires:  gcc-java >= 4.0.2
-BuildRequires:  java-gcj-compat-devel >= 1.0.64
-BuildRequires:  unzip >= 5.52
-Requires(post):   java-gcj-compat >= 1.0.64
-Requires(postun): java-gcj-compat >= 1.0.64
-%else
-BuildRequires:  java-devel >= 1.4.2
+BuildRequires:  java-gcj-compat-devel
 %endif
+BuildRequires:  java-rpmbuild
 
 Requires:       gdb make gcc-c++ autoconf automake eclipse-cvs-client
 Requires:       eclipse-platform >= 1:3.3.0
