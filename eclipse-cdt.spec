@@ -103,6 +103,7 @@ BuildRequires: eclipse-pde
 BuildRequires:  java-gcj-compat-devel
 %endif
 BuildRequires:  java-rpmbuild
+BuildRequires:  zip
 
 Requires:       gdb make gcc-c++ autoconf automake eclipse-cvs-client
 Requires:       eclipse-platform >= 1:3.3.0
