@@ -4,9 +4,10 @@ Epoch: 1
 %define major                   4
 %define minor                   0       
 %define majmin                  %{major}.%{minor}
-%define micro                   1
+%define micro                   3
 %define eclipse_base            %{_datadir}/eclipse
 %define eclipse_lib_base        %{_libdir}/eclipse
+%define build_id		I200804041441
 
 # All arches line up except i386 -> x86
 %ifarch %{ix86}
@@ -18,7 +19,7 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        %mkrel 0.1.2
+Release:        %mkrel 0.1.1
 License:        Eclipse Public License
 Group:          Development/Java
 URL:            http://www.eclipse.org/cdt
@@ -28,42 +29,48 @@ Requires:       eclipse-platform
 # The following tarball was generated as follows.  Note that the optional c99 and upc parsers plus the
 # optional xlc support features have been removed.
 #
-# mkdir -p temp && cd temp
-# mkdir -p home
-# rm -rf org.eclipse.cdt-releng
-# cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools export -r CDT_4_0_1 org.eclipse.cdt-releng/org.eclipse.cdt.releng
-# cd org.eclipse.cdt-releng/org.eclipse.cdt.releng/
-# sed --in-place 's/home/cvsroot/' maps/cdt.map
-# sed --in-place -e'81,81i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">\n\t\t\t<property name="builder" value="${basedir}/master"/>\n\t\t</ant>' build.xml
-# sed --in-place -e'81,81i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">\n\t\t\t<property name="builder" value="${basedir}/testing"/>\n\t\t</ant>' build.xml
-# sed --in-place -e'63,63i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">\n\t\t\t<property name="builder" value="${basedir}/master"/>\n\t\t</ant>' build.xml
-# sed --in-place -e'63,63i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">\n\t\t\t<property name="builder" value="${basedir}/testing"/>\n\t\t</ant>' build.xml
-## Remove lpgjavaruntime jar reference
-# sed --in-place -e'127,129d' build.xml
-# eclipse -nosplash -Duser.home=../../home \
-#   -application org.eclipse.ant.core.antRunner \
-#   -buildfile build.xml -DbaseLocation=/usr/share/eclipse \
-#   -Dpde.build.scripts=/usr/share/eclipse/plugins/org.eclipse.pde.build/scripts \
-#   -DcdtTag=CDT_4_0_1 \
-#   -DdontUnzip=true fetch
-# find . -name net.*.jar -exec rm {} \;
-# pushd results/features
-# rm -rf *c99*
-# rm -rf *upc*
-# popd
-# pushd results/plugins
-# rm -rf *c99*
-# rm -rf *upc*
-# popd
-# pushd results/features/org.eclipse.cdt.master
-# sed --in-place -e "44,47d" feature.xml
-# sed --in-place -e "24,31d" feature.xml
-# popd
-# cd .. && tar jcf eclipse-cdt-fetched-src-CDT_4_0_1.tar.bz2 org.eclipse.cdt.releng
+#mkdir -p temp && cd temp
+#mkdir -p home
+#rm -rf org.eclipse.cdt-releng
+#cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools export -r CDT_4_0_3 org.eclipse.cdt-releng/org.eclipse.cdt.releng
+#cd org.eclipse.cdt-releng/org.eclipse.cdt.releng/
+#sed --in-place 's/home/cvsroot/' maps/cdt.map
+# The build.xml doesn't fetch master or testing features so we must add this ourselves.
+#sed --in-place -e'87,87i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">\n\t\t\t<property name="builder" value="${basedir}/master"/>\n\t\t</ant>' build.xml
+#sed --in-place -e'87,87i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">\n\t\t\t<property name="builder" value="${basedir}/testing"/>\n\t\t</ant>' build.xml
+#sed --in-place -e'69,69i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">\n\t\t\t<property name="builder" value="${basedir}/master"/>\n\t\t</ant>' build.xml
+#sed --in-place -e'69,69i\\t\t<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">\n\t\t\t<property name="builder" value="${basedir}/testing"/>\n\t\t</ant>' build.xml
+# Remove copying of binary jar in build.xml.  We remove this jar so this operation will fail.
+#sed --in-place -e'130,132d' build.xml
+#eclipse -nosplash -Duser.home=../../home \
+#  -application org.eclipse.ant.core.antRunner \
+#  -buildfile build.xml -DbaseLocation=/usr/share/eclipse \
+#  -Dpde.build.scripts=/usr/share/eclipse/plugins/org.eclipse.pde.build/scripts \
+#  -DcdtTag=CDT_4_0_3 \
+#  -DdontUnzip=true fetch
+#find . -name net.*.jar -exec rm {} \;
+# Unfortunately for us, bringing in the master feature also drags in the c99 and upc features.  We must
+# remove them because they depend on the binary jar we just removed and build will note this, even if we
+# don't build those features.
+#pushd results/features
+#rm -rf *c99*
+#rm -rf *upc*
+#popd
+#pushd results/plugins
+#rm -rf *c99*
+#rm -rf *upc*
+#popd
+# Remove optional features: c99, upc, and xlc from the master feature list.  We do not package them.
+#pushd results/features/org.eclipse.cdt.master
+#sed --in-place -e "44,47d" feature.xml
+#sed --in-place -e "24,31d" feature.xml
+#popd
+#cd .. && tar jcf eclipse-cdt-fetched-src-CDT_4_0_3.tar.bz2 org.eclipse.cdt.releng
+#
 
-Source0: %{name}-fetched-src-CDT_4_0_1.tar.bz2
+Source0: %{name}-fetched-src-CDT_4_0_3.tar.bz2
 
-Source1: http://sources.redhat.com/eclipse/autotools/eclipse-cdt-fetched-src-autotools-0_9_5.tar.gz
+Source1: http://sources.redhat.com/eclipse/autotools/eclipse-cdt-fetched-src-autotools-0_9_6.tar.gz
 
 # The following tarball was generated thusly:
 #
@@ -84,7 +91,7 @@ Source3: %{name}-target_filter.gif.gz
 # Patch to add special "ForAllElements" targets to CDT sdk/customTargets.xml.
 Patch1: %{name}-no-cvs2-patch
 # Patch to remove tests from CDT build.xml.
-Patch4: %{name}-no-tests-4.0.patch
+Patch4: %{name}-no-tests-4.0.3.patch
 # Patch to cppunit code to support double-clicking on file names, classes, and
 # member names in the Hierarchy and Failure views such that the appropriate
 # file will be opened and the appropriate line will be selected.
@@ -97,6 +104,9 @@ Patch10: %{name}-cppunit-default-location.patch
 # Patch to cppunit code to remove references to deprecated class which has
 # been removed in CDT 4.0.
 Patch11: %{name}-cppunit-env-tab.patch
+# Remove include of stropts.h in openpty.c as it is no longer included 
+# in glibc-headers package
+Patch12: %{name}-openpty.patch
 
 BuildRequires: eclipse-pde
 %if %{gcj_support}
@@ -149,11 +159,21 @@ pushd master
 sed --in-place -e "74,82d" build.properties
 sed --in-place -e "s:configs= \\\:configs=linux,gtk,%{eclipse_arch}:" build.properties
 popd
+pushd platform
+sed --in-place -e "74,82d" build.properties
+sed --in-place -e "s:configs=.*\\\:configs=linux,gtk,%{eclipse_arch}:" build.properties
+popd
 %patch4 -p0
 # Following is a patch to the CDT which is missing a b/w version
 # of an icon.  This patch can be removed once fixed upstream.
 pushd results/plugins/org.eclipse.cdt.make.ui/icons/dtool16
 tar -xzf %{SOURCE3}
+popd
+
+# Following patches a C file to remove reference to stropts.h which is
+# not needed and is missing in latest glibc
+pushd results/plugins/org.eclipse.cdt.core.linux/library
+%patch12 -p0
 popd
 popd
 
@@ -213,7 +233,7 @@ pushd org.eclipse.cdt.releng
 popd
 
 # Autotools has dependencies on CDT so we must add these to the SDK directory
-unzip -o org.eclipse.cdt.releng/results/I.*/cdt-master-*.zip -d $SDK
+unzip -o org.eclipse.cdt.releng/results/I.%{build_id}/cdt-master-%{version}-%{build_id}.zip -d $SDK
 
 # Autotools build
 pushd autotools
@@ -251,7 +271,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 install -d -m755 ${RPM_BUILD_ROOT}/%{eclipse_base}
 
-unzip org.eclipse.cdt.releng/results/I.*/cdt-master-*.zip \
+unzip org.eclipse.cdt.releng/results/I.%{build_id}/cdt-master-%{version}-%{build_id}.zip \
 -d ${RPM_BUILD_ROOT}/%{eclipse_base}
 
 # Remove testing, upc, xlc, master, and gdbjtag features and plugins
@@ -274,9 +294,33 @@ rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.test*
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.core.test*
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.debug.ui.test*
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.managedbuilder.core.test*
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.managedbuilder.xlc*
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.make.xlc*
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.managedbuilder.ui.test*
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.refactoring.test*
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.ui.test*
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.errorparsers.xlc*
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.core.parser.c99*
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.core.parser.upc*
+# FIXME: figure out why these plugins are built despite our previous efforts.
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.core.aix*
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.core.macosx*
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.core.qnx*
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.core.solaris*
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.core.win32*
+# FIXME: kludge to remove linux arch plugins we don't want.  Again, figure
+#        out why they are being built and stop them.
+mkdir -p tempdir
+mv ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.core.linux.%{eclipse_arch}_4* tempdir
+rm ${RPM_BUILD_ROOT}%{eclipse_base}/plugins/org.eclipse.cdt.core.linux.*
+mv tempdir/* ${RPM_BUILD_ROOT}%{eclipse_base}/plugins
+rm -rf tempdir
+
+# Remove optional parser features that require lpgruntime binary jar we already
+# removed.
+rm -rf ${RPM_BUILD_ROOT}%{eclipse_base}/features/org.eclipse.cdt.core.parser.c99*
+rm -rf ${RPM_BUILD_ROOT}%{eclipse_base}/features/org.eclipse.cdt.core.parser.upc*
+rm -rf ${RPM_BUILD_ROOT}%{eclipse_base}/features/org.eclipse.cdt.xlc*
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/site.xml
 rm ${RPM_BUILD_ROOT}%{eclipse_base}/pack.properties
 
