@@ -19,9 +19,9 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        %mkrel 0.1.1
+Release:        %mkrel 0.1.2
 License:        Eclipse Public License
-Group:          Development/Java
+Group:          Development/C
 URL:            http://www.eclipse.org/cdt
 Requires:       eclipse-platform
 
@@ -348,9 +348,7 @@ pushd cppunit
 unzip -qq -d $RPM_BUILD_ROOT%{eclipse_base}/.. build/rpmBuild/org.eclipse.cdt.cppunit.zip
 popd
 
-%if %{gcj_support}
-aot-compile-rpm
-%endif
+%{gcj_compile}
 
 %clean 
 rm -rf ${RPM_BUILD_ROOT}
@@ -382,9 +380,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %{eclipse_base}/plugins/org.eclipse.cdt.ui*
 %{eclipse_base}/plugins/com.redhat.eclipse.cdt*
 %{_libdir}/eclipse/plugins/org.eclipse.cdt.core*
-%if %{gcj_support}
-%{_libdir}/gcj/%{name}
-%endif
+%{gcj_files}
 %doc %{eclipse_base}/features/org.eclipse.cdt.cppunit_*/cpl-v10.html
 
 %files sdk
