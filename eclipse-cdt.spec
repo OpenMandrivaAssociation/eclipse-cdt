@@ -19,7 +19,7 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        %mkrel 0.1.2
+Release:        %mkrel 3.1.2
 License:        Eclipse Public License
 Group:          Development/C
 URL:            http://www.eclipse.org/cdt
