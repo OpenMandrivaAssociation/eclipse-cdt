@@ -95,7 +95,7 @@ Eclipse features and plugins that are useful for C and C++ development.
 
 %package mylyn
 Summary:        Eclipse C/C++ Development Tools (CDT) SDK plugin
-Group:          Text Editors/Integrated Development Environments (IDE)
+Group:          Development/Java
 Requires:       %{name} = %{epoch}:%{version}-%{release}
 Requires:       eclipse-mylyn >= 3.0
 
