@@ -72,6 +72,7 @@ Patch12: %{name}-openpty.patch
 
 BuildRequires: eclipse-pde
 BuildRequires: eclipse-mylyn >= 3.0
+BuildRequires: tomcat5-jsp-2.0-api
 %if %{gcj_support}
 BuildRequires:  java-gcj-compat-devel
 %endif
