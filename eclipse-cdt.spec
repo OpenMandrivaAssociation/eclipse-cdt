@@ -1,12 +1,14 @@
 Epoch: 1
 
 %define gcj_support             0
+%define run_tests               1
+%define ship_tests              0
 %define major                   5
 %define minor                   0       
 %define majmin                  %{major}.%{minor}
 %define micro                   0
 %define eclipse_base            %{_libdir}/eclipse
-%define build_id		200808081650
+%define build_id		200806171202
 
 # All arches line up except i386 -> x86
 %ifarch %{ix86}
@@ -18,7 +20,7 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        %mkrel 0.2.1
+Release:        %mkrel 0.4.1
 License:        Eclipse Public License
 Group:          Development/C
 URL:            http://www.eclipse.org/cdt
@@ -48,11 +50,14 @@ Source1: http://sources.redhat.com/eclipse/autotools/eclipse-cdt-fetched-src-aut
 
 # Binary gif file that is currently missing from the CDT.  Since
 # binary patches are not possible, the gif is included as a source file.
-
 Source3: %{name}-target_filter.gif.gz
 
-# Patch to remove tests from CDT build.xml.
+# Script to run the tests in Xvnc
+Source5: %{name}-runtests.sh
+
+# Don't run the tests as part of the build.  We'll do this ourselves.
 Patch4: %{name}-no-tests-%{version}.patch
+
 ## Patch to cppunit code to support double-clicking on file names, classes, and
 ## member names in the Hierarchy and Failure views such that the appropriate
 ## file will be opened and the appropriate line will be selected.
@@ -70,11 +75,25 @@ Patch4: %{name}-no-tests-%{version}.patch
 # in glibc-headers package
 Patch12: %{name}-openpty.patch
 
+# Add XML -> HTML generation after running tests
+Patch13: %{name}-testaggregation.patch
+
+# FIXME:  investigate for 5.0.1
+#
+# There is a bug in this test that makes it not build.  It looks like
+# it's fixed upstream in 5.0.1
+# https://bugs.eclipse.org/bugs/show_bug.cgi?id=130235
+Patch14: %{name}-noLexerTests.patch
+
 BuildRequires: eclipse-pde
 BuildRequires: eclipse-mylyn >= 3.0
 BuildRequires: tomcat5-jsp-2.0-api
 %if %{gcj_support}
 BuildRequires:  java-gcj-compat-devel
+%endif
+%if %{run_tests}
+BuildRequires:  vnc-server
+BuildRequires:  w3m
 %endif
 BuildRequires:  java-rpmbuild
 BuildRequires:  zip
@@ -110,6 +129,17 @@ Requires:       %{name} = %{epoch}:%{version}-%{release}
 %description sdk
 Source for Eclipse CDT for use within Eclipse.
 
+%if %{ship_tests}
+%package tests
+Summary:        Test suite for Eclipse C/C++ Development Tools (CDT)
+Group:          Text Editors/Integrated Development Environments (IDE)
+Requires:       %{name} = %{epoch}:%{version}-%{release}
+Requires:       vnc-server
+
+%description tests
+Test suite for Eclipse C/C++ Development Tools (CDT).
+%endif
+
 %prep
 %setup -q -c 
 
@@ -126,6 +156,13 @@ rm -rf results/plugins/org.eclipse.cdt.core.lrparser
 # not needed and is missing in latest glibc
 pushd results/plugins/org.eclipse.cdt.core.linux/library
 %patch12 -p0
+popd
+pushd results/plugins
+%patch13
+popd
+pushd results/plugins/org.eclipse.cdt.core.tests
+rm parser/org/eclipse/cdt/core/parser/tests/scanner/LexerTests.java
+%patch14
 popd
 
 # Only build the sdk
@@ -179,8 +216,11 @@ popd
 # We actually remove the entire "os" directory since otherwise
 # we wind up with some empty directories that we don't want.
 #rm -r org.eclipse.cdt.releng/results/plugins/org.eclipse.cdt.core.linux/os
+mv org.eclipse.cdt.releng/results/plugins/org.eclipse.cdt.core.tests/resources/testlib/x86/so.g/libtestlib_g.so \
+  org.eclipse.cdt.releng/results/plugins/org.eclipse.cdt.core.tests/resources/testlib/x86/so.g/libtestlib_g.BAK
 find -name \*.so | xargs rm -rf
-
+mv org.eclipse.cdt.releng/results/plugins/org.eclipse.cdt.core.tests/resources/testlib/x86/so.g/libtestlib_g.BAK \
+  org.eclipse.cdt.releng/results/plugins/org.eclipse.cdt.core.tests/resources/testlib/x86/so.g/libtestlib_g.so
 
 %build
 export JAVA_HOME=%{java_home}
@@ -200,10 +240,11 @@ homedir=$(cd home > /dev/null && pwd)
 pushd org.eclipse.cdt.releng/results/plugins/org.eclipse.cdt.core.linux/library
 make JAVA_HOME="%{java_home}" ARCH=%{eclipse_arch} CC='gcc -D_GNU_SOURCE'
 popd
-PDEBUILDVERSION=$(ls %{eclipse_base}/dropins/sdk/eclipse/plugins \
+
+PDEBUILDVERSION=$(ls %{eclipse_base}/dropins/sdk/plugins \
   | grep org.eclipse.pde.build_ | \
   sed 's/org.eclipse.pde.build_//')
-PDEDIR=%{eclipse_base}/dropins/sdk/eclipse/plugins/org.eclipse.pde.build_$PDEBUILDVERSION
+PDEDIR=%{eclipse_base}/dropins/sdk/plugins/org.eclipse.pde.build_$PDEBUILDVERSION
 # Call eclipse headless to process CDT releng build scripts
 pushd org.eclipse.cdt.releng 
 %{java} -cp $SDK/startup.jar \
@@ -217,7 +258,6 @@ pushd org.eclipse.cdt.releng
 -XX:CompileCommand="exclude,org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPLinkage,addBinding" \
      org.eclipse.core.launcher.Main             \
     -application org.eclipse.ant.core.antRunner \
-    -consolelog \
     -DbuildId=%{build_id} \
     -DbranchVersion=%{version} \
     -DforceContextQualifier=%{build_id} \
@@ -272,6 +312,10 @@ popd
 %install
 rm -rf ${RPM_BUILD_ROOT}
 
+# Eclipse may try to write to the home directory.
+mkdir -p home
+homedir=$(cd home > /dev/null && pwd)
+
 installDir=${RPM_BUILD_ROOT}/%{eclipse_base}/dropins/cdt
 mylynInstallDir=${installDir}-mylyn
 sdkInstallDir=${installDir}-sdk
@@ -293,9 +337,9 @@ for x in $installDir/eclipse/features/*.jar; do
   rm $x
 done 
 
-## Autotools install
+# Autotools install
 pushd autotools
-unzip -qq -d $installDir/eclipse build/rpmBuild/com.redhat.eclipse.cdt.autotools.feature.zip
+unzip -qq -d $installDir build/rpmBuild/com.redhat.eclipse.cdt.autotools.feature.zip
 popd
 
 mkdir -p $mylynInstallDir/eclipse/features $mylynInstallDir/eclipse/plugins
@@ -310,10 +354,8 @@ mv $installDir/eclipse/features/*sdk* $sdkInstallDir/eclipse/features
 mv $installDir/eclipse/plugins/*sdk* $sdkInstallDir/eclipse/plugins
 
 rm -rf $installDir/eclipse/features/org.eclipse.cdt.master_*
-rm -rf $installDir/eclipse/features/org.eclipse.cdt.testing_*
-rm -rf $installDir/eclipse/plugins/org.eclipse.cdt.testing_*
-rm -rf $installDir/eclipse/plugins/org.eclipse.test_*
 rm -rf $installDir/eclipse/plugins/org.eclipse.ant.optional.junit_*
+rm -rf $installDir/eclipse/plugins/org.eclipse.test_*
 
 ## Cppunit install
 #pushd cppunit
@@ -335,7 +377,9 @@ org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
 -publishArtifacts \
 -append \
 -artifactRepositoryName "CDT" \
--metadataRepositoryName "CDT"
+-metadataRepositoryName "CDT" \
+-vmargs \
+-Duser.home=$homedir
 
 mv repo/content.xml .
 rm -rf repo
@@ -356,7 +400,9 @@ org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
 -publishArtifacts \
 -append \
 -artifactRepositoryName "CDT Mylyn" \
--metadataRepositoryName "CDT Mylyn"
+-metadataRepositoryName "CDT Mylyn" \
+-vmargs \
+-Duser.home=$homedir
 
 mv repo/content.xml .
 rm -rf repo
@@ -377,13 +423,60 @@ org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
 -publishArtifacts \
 -append \
 -artifactRepositoryName "CDT SDK" \
--metadataRepositoryName "CDT SDK"
+-metadataRepositoryName "CDT SDK" \
+-vmargs \
+-Duser.home=$homedir
 
 mv repo/content.xml .
 rm -rf repo
 popd
 
+mkdir -p ${installDir}-tests/plugins
+mkdir -p ${installDir}-tests/features
+mv ${installDir}/eclipse/plugins/*test* \
+  ${installDir}-tests/plugins
+mv ${installDir}/eclipse/features/*test* \
+  ${installDir}-tests/features
+for x in ${installDir}-tests/plugins/*.jar; do
+  dirname=`echo $x | sed -e 's:\\(.*\\)\\.jar:\\1:g'`
+  mkdir -p $dirname
+  unzip -q $x -d $dirname
+  rm $x
+done 
+cp -p %{SOURCE5} ${installDir}-tests/runtests
+chmod 755 ${installDir}-tests/runtests
+%if ! %{ship_tests}
+%if ! %{run_tests}
+rm -rf ${installDir}-tests
+%endif
+%endif
+
 %{gcj_compile}
+
+%if %{run_tests}
+%check
+installDir=${RPM_BUILD_ROOT}/%{eclipse_base}/dropins/cdt
+# Copy the SDK to simulate real system
+rm -rf SDK.fortests
+cp -rpL %{eclipse_base} SDK.fortests
+# Remove any CDT or CDT tests we may have currently installed
+rm -rf SDK.fortests/dropins/cdt*
+cp -rpL $installDir SDK.fortests/dropins
+# FIXME:  will also need to rename this if autotools goes 
+# s/com.redhat/org.eclipse
+# The autotools plugin offers lots of completions but these cause issues
+# with some of the tests which expect only a few completions.  We should
+# update the tests or something ...
+rm -rf SDK.fortests/dropins/cdt/eclipse/plugins/com.redhat*
+cp -rpL ${installDir}-tests SDK.fortests/dropins
+# FIXME:  I'd like to simulate real life with something like this ...
+#chown -R root:root SDK.fortests
+SDK.fortests/dropins/cdt-tests/runtests -e $(pwd)/SDK.fortests
+w3m -cols 120 -dump results-*/html/org.eclipse.cdt.testing.html
+%if ! %{ship_tests}
+rm -rf ${installDir}-tests
+%endif
+%endif
 
 %clean 
 rm -rf ${RPM_BUILD_ROOT}
@@ -410,4 +503,11 @@ rm -rf ${RPM_BUILD_ROOT}
 %files mylyn
 %defattr(-,root,root)
 %{eclipse_base}/dropins/cdt-mylyn
+
+%if %{ship_tests}
+%files tests
+%defattr(-,root,root)
+%{eclipse_base}/dropins/cdt-tests
+%endif
+
 
