@@ -20,7 +20,7 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        %mkrel 0.4.1
+Release:        %mkrel 0.6.1
 License:        Eclipse Public License
 Group:          Development/C
 URL:            http://www.eclipse.org/cdt
@@ -57,6 +57,12 @@ Source5: %{name}-runtests.sh
 
 # Don't run the tests as part of the build.  We'll do this ourselves.
 Patch4: %{name}-no-tests-%{version}.patch
+
+# Fix autotools plugin to reference correct project nature.
+Patch5: %{name}-autotools-plugin.patch
+
+# Fix for autotools property settings problem.
+Patch6: %{name}-autotools-bug461647.patch
 
 ## Patch to cppunit code to support double-clicking on file names, classes, and
 ## member names in the Hierarchy and Failure views such that the appropriate
@@ -199,6 +205,10 @@ popd
 mkdir autotools
 pushd autotools
 tar -xzf %{SOURCE1}
+pushd com.redhat.eclipse.cdt.autotools
+%patch5
+%patch6
+popd
 popd
 
 ## Cppunit stuff
