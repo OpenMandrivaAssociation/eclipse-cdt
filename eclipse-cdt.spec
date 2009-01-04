@@ -1,7 +1,7 @@
 Epoch: 1
 
 %define gcj_support             0
-%define run_tests               1
+%define run_tests               0
 %define ship_tests              0
 %define major                   5
 %define minor                   0
