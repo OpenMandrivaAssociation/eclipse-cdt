@@ -4,11 +4,11 @@ Epoch: 1
 %define run_tests               1
 %define ship_tests              0
 %define major                   5
-%define minor                   0       
+%define minor                   0
 %define majmin                  %{major}.%{minor}
-%define micro                   0
+%define micro                   1
 %define eclipse_base            %{_libdir}/eclipse
-%define build_id		200806171202
+%define build_id		200809190802
 
 # All arches line up except i386 -> x86
 %ifarch %{ix86}
@@ -31,10 +31,14 @@ Requires:       eclipse-platform
 # script.  Note that the optional c99 and upc parsers plus the optional
 # xlc support features have been removed.
 
-Source0: %{name}-fetched-src-CDT_5_0_0.tar.bz2
+Source0: %{name}-fetched-src-CDT_5_0_1.tar.bz2
 Source4: fetch-cdt.sh
 
 Source1: http://sources.redhat.com/eclipse/autotools/eclipse-cdt-fetched-src-autotools-1_0_0.tar.gz
+#Source1: http://sources.redhat.com/eclipse/autotools/eclipse-cdt-fetched-src-autotools-20081106.tar.gz
+#
+#Source2: http://sources.redhat.com/eclipse/autotools/eclipse-cdt-fetched-src-libhover-20081106.tar.gz
+
 
 ## The following tarball was generated thusly:
 ##
@@ -77,7 +81,7 @@ Patch6: %{name}-autotools-bug461647.patch
 ## been removed in CDT 4.0.
 #Patch11: %{name}-cppunit-env-tab.patch
 
-# Remove include of stropts.h in openpty.c as it is no longer included 
+# Remove include of stropts.h in openpty.c as it is no longer included
 # in glibc-headers package
 Patch12: %{name}-openpty.patch
 
@@ -104,7 +108,7 @@ BuildRequires:  w3m
 BuildRequires:  java-rpmbuild
 BuildRequires:  zip
 
-Requires:       gdb make gcc-c++ autoconf automake 
+Requires:       gdb make gcc-c++ autoconf automake
 Requires:       eclipse-platform >= 1:3.4.0
 
 # Currently, upstream CDT only supports building on the platforms listed here.
@@ -147,7 +151,7 @@ Test suite for Eclipse C/C++ Development Tools (CDT).
 %endif
 
 %prep
-%setup -q -c 
+%setup -q -c
 
 %patch4
 
@@ -172,11 +176,11 @@ rm parser/org/eclipse/cdt/core/parser/tests/scanner/LexerTests.java
 popd
 
 # Only build the sdk
-offset=0; 
+offset=0;
 for line in $(grep -no "value=.*platform" build.xml); do
   linenum=$(echo "$line" | cut -d : -f 1)
-  sed --in-place -e "$(expr $linenum - 1 - $offset ),$(expr $linenum + 1 - $offset)d" build.xml 
-  offset=$(expr $offset + 3) 
+  sed --in-place -e "$(expr $linenum - 1 - $offset ),$(expr $linenum + 1 - $offset)d" build.xml
+  offset=$(expr $offset + 3)
 done
 # Only build for the platform on which we're building
 sed --in-place -e "s:linux.gtk.x86/:linux.gtk.%{eclipse_arch}/:g" build.xml
@@ -210,6 +214,12 @@ pushd com.redhat.eclipse.cdt.autotools
 %patch6
 popd
 popd
+
+## Libhover stuff
+#mkdir libhover
+#pushd libhover
+#tar -xzf %{SOURCE2}
+#popd
 
 ## Cppunit stuff
 #
@@ -256,7 +266,7 @@ PDEBUILDVERSION=$(ls %{eclipse_base}/dropins/sdk/plugins \
   sed 's/org.eclipse.pde.build_//')
 PDEDIR=%{eclipse_base}/dropins/sdk/plugins/org.eclipse.pde.build_$PDEBUILDVERSION
 # Call eclipse headless to process CDT releng build scripts
-pushd org.eclipse.cdt.releng 
+pushd org.eclipse.cdt.releng
 %{java} -cp $SDK/startup.jar \
      -Duser.home=$homedir                        \
      -DbuildId=%{build_id} \
@@ -300,7 +310,7 @@ pushd autotools
      -DsourceDirectory=$(pwd)                          \
      -DbaseLocation=$SDK                               \
      -Dbuilder=$PDEDIR/templates/package-build  \
-     -f $PDEDIR/scripts/build.xml 
+     -f $PDEDIR/scripts/build.xml
 
 popd
 
@@ -345,7 +355,7 @@ for x in $installDir/eclipse/features/*.jar; do
   mkdir -p $dirname
   unzip -q $x -d $dirname
   rm $x
-done 
+done
 
 # Autotools install
 pushd autotools
@@ -452,7 +462,7 @@ for x in ${installDir}-tests/plugins/*.jar; do
   mkdir -p $dirname
   unzip -q $x -d $dirname
   rm $x
-done 
+done
 cp -p %{SOURCE5} ${installDir}-tests/runtests
 chmod 755 ${installDir}-tests/runtests
 %if ! %{ship_tests}
@@ -472,7 +482,7 @@ cp -rpL %{eclipse_base} SDK.fortests
 # Remove any CDT or CDT tests we may have currently installed
 rm -rf SDK.fortests/dropins/cdt*
 cp -rpL $installDir SDK.fortests/dropins
-# FIXME:  will also need to rename this if autotools goes 
+# FIXME:  will also need to rename this if autotools goes
 # s/com.redhat/org.eclipse
 # The autotools plugin offers lots of completions but these cause issues
 # with some of the tests which expect only a few completions.  We should
@@ -488,7 +498,7 @@ rm -rf ${installDir}-tests
 %endif
 %endif
 
-%clean 
+%clean
 rm -rf ${RPM_BUILD_ROOT}
 
 %if %{gcj_support}
