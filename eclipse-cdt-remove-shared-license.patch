@@ -1,0 +1,84 @@
+diff -up ./org.eclipse.cdt.build.crossgcc/feature.xml.fix ./org.eclipse.cdt.build.crossgcc/feature.xml
+--- ./org.eclipse.cdt.build.crossgcc/feature.xml.fix	2011-06-23 16:04:26.000000000 -0400
++++ ./org.eclipse.cdt.build.crossgcc/feature.xml	2011-06-23 16:04:33.000000000 -0400
+@@ -4,9 +4,7 @@
+       label="%featureName"
+       version="1.0.0.qualifier"
+       provider-name="%providerName"
+-      plugin="org.eclipse.cdt.build.crossgcc"
+-      license-feature="org.eclipse.cdt.license"
+-      license-feature-version="1.0.0.qualifier">
++      plugin="org.eclipse.cdt.build.crossgcc">
+ 
+    <description>
+       %description
+diff -up ./org.eclipse.cdt.bupc/feature.xml.fix ./org.eclipse.cdt.bupc/feature.xml
+--- ./org.eclipse.cdt.bupc/feature.xml.fix	2011-06-23 16:02:15.000000000 -0400
++++ ./org.eclipse.cdt.bupc/feature.xml	2011-06-23 16:02:46.000000000 -0400
+@@ -4,9 +4,7 @@
+       label="%featureName"
+       version="1.0.3.qualifier"
+       provider-name="%providerName"
+-      plugin="org.eclipse.cdt.managedbuilder.bupc.ui"
+-      license-feature="org.eclipse.cdt.license"
+-      license-feature-version="1.0.0.qualifier">
++      plugin="org.eclipse.cdt.managedbuilder.bupc.ui">
+ 
+    <description>
+       %description
+diff -up ./org.eclipse.cdt.debug.edc/feature.xml.fix ./org.eclipse.cdt.debug.edc/feature.xml
+--- ./org.eclipse.cdt.debug.edc/feature.xml.fix	2011-06-23 16:04:03.000000000 -0400
++++ ./org.eclipse.cdt.debug.edc/feature.xml	2011-06-23 16:04:10.000000000 -0400
+@@ -4,9 +4,7 @@
+       label="%featureName"
+       version="2.0.0.qualifier"
+       provider-name="%providerName"
+-      plugin="org.eclipse.cdt.debug.edc"
+-      license-feature="org.eclipse.cdt.license"
+-      license-feature-version="1.0.0.qualifier">
++      plugin="org.eclipse.cdt.debug.edc">
+ 
+    <description>
+       %description
+diff -up ./org.eclipse.cdt.debug.gdbjtag/feature.xml.fix ./org.eclipse.cdt.debug.gdbjtag/feature.xml
+--- ./org.eclipse.cdt.debug.gdbjtag/feature.xml.fix	2011-06-23 16:03:07.000000000 -0400
++++ ./org.eclipse.cdt.debug.gdbjtag/feature.xml	2011-06-23 16:03:15.000000000 -0400
+@@ -4,9 +4,7 @@
+       label="%featureName"
+       version="7.0.0.qualifier"
+       provider-name="%providerName"
+-      image="eclipse_update_120.jpg"
+-      license-feature="org.eclipse.cdt.license"
+-      license-feature-version="1.0.0.qualifier">
++      image="eclipse_update_120.jpg">
+ 
+    <description>
+       %description
+diff -up ./org.eclipse.cdt.launch.remote/feature.xml.fix ./org.eclipse.cdt.launch.remote/feature.xml
+--- ./org.eclipse.cdt.launch.remote/feature.xml.fix	2011-06-23 16:04:52.000000000 -0400
++++ ./org.eclipse.cdt.launch.remote/feature.xml	2011-06-23 16:04:58.000000000 -0400
+@@ -3,9 +3,7 @@
+       id="org.eclipse.cdt.launch.remote"
+       label="%featureName"
+       version="6.0.0.qualifier"
+-      provider-name="%providerName"
+-      license-feature="org.eclipse.cdt.license"
+-      license-feature-version="1.0.0.qualifier">
++      provider-name="%providerName">
+ 
+    <description>
+       %description
+diff -up ./org.eclipse.cdt.msw/feature.xml.fix ./org.eclipse.cdt.msw/feature.xml
+--- ./org.eclipse.cdt.msw/feature.xml.fix	2011-06-23 16:03:31.000000000 -0400
++++ ./org.eclipse.cdt.msw/feature.xml	2011-06-23 16:03:41.000000000 -0400
+@@ -3,9 +3,7 @@
+       id="org.eclipse.cdt.msw"
+       label="CDT Visual C++ Support"
+       version="1.0.0.qualifier"
+-      provider-name="Eclipse CDT"
+-      license-feature="org.eclipse.cdt.license"
+-      license-feature-version="1.0.0.qualifier">
++      provider-name="Eclipse CDT">
+ 
+    <description>
+       %description

@@ -1,0 +1,15 @@
+diff -up ./org.eclipse.linuxtools.cdt.libhover-feature/feature.xml.fix ./org.eclipse.linuxtools.cdt.libhover-feature/feature.xml
+--- ./org.eclipse.linuxtools.cdt.libhover-feature/feature.xml.fix	2011-04-12 18:02:28.000000000 -0400
++++ ./org.eclipse.linuxtools.cdt.libhover-feature/feature.xml	2011-04-12 18:02:50.000000000 -0400
+@@ -50,4 +50,11 @@
+          version="0.0.0"
+          unpack="false"/>
+ 
++   <plugin
++         id="org.eclipse.linuxtools.cdt.libhover.libstdcxx"
++         download-size="0"
++         install-size="0"
++         version="0.0.0"
++         unpack="false"/>
++
+ </feature>
