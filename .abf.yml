@@ -1,15 +1,4 @@
 sources:
-  "acmacros-2.13.xml:"	11c0d93a9c20117f55421846639372899a098b8d
-  "acmacros-2.59.xml:"	de86b55a29d88eba990eb0c21c5b71dd3e60f431
-  "acmacros-2.61.xml:"	949c4932c161a8ac090dd7980b14c248e209c018
-  "ammacros-1.4-p6.xml:"	ae89490ed85854c865d9e51bd7c4bb28e15664c9
-  "ammacros-1.9.5.xml:"	3d29512ea7a03281b92742f60f4b11750b898e47
-  "ammacros-1.9.6.xml:"	4d177607fb2a30c6bdcea743b11b1f830a7eac99
-  "eclipse-cdt-fetched-src-autotools-dd3a8b8286575cba53fa95fff290fb708f843edd.tar.gz:"	cc60cb888999124794ef682e486fb26d21a82175
-  "eclipse-cdt-fetched-src-libhover-dd3a8b8286575cba53fa95fff290fb708f843edd.tar.gz:"	f571ed2f088fd64e4e1b15614f1588bc4ca3b057
-  "eclipse-cdt-fetched-src-v201106081058.tar.bz2:"	1433245a3706c9ef2448b902e61212c50ccf9d51
-  "eclipse-cdt-runtests.sh:"	a7b9270c4e262c96ed65a9dd5d54f0e665accb4d
-  "fetch-cdt.sh:"	c6f450fbea6e03130e2b435fe9534eabf419b45e
-  "libstdc++-v3.libhover:"	b762efbd3cf2c24a049527096eaebade4b4c754a
-  "make-autotools-tarball.sh:"	248f8461c29b254e98addaf4008c07822db5de39
-  "make-libhover-tarball.sh:"	ce49a825e7b08a824ee03d8b2727935fc67f7e27
+  CDT_8_2_1.tar.bz2: 5ae52ea60902ab72f61716aab0a0d194f36b9bfb
+  libstdc++-v3.libhover: b762efbd3cf2c24a049527096eaebade4b4c754a
+  org.eclipse.linuxtools-2.1.0.tar.bz2: 3d88eae5dbe303ea0f4af9caa7e70855e40f46e0
