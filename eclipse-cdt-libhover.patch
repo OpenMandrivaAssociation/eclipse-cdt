@@ -1,0 +1,12 @@
+diff -up ./org.eclipse.linuxtools.cdt.libhover/src/org/eclipse/linuxtools/cdt/libhover/LibhoverPlugin.java.fix ./org.eclipse.linuxtools.cdt.libhover/src/org/eclipse/linuxtools/cdt/libhover/LibhoverPlugin.java
+--- ./org.eclipse.linuxtools.cdt.libhover/src/org/eclipse/linuxtools/cdt/libhover/LibhoverPlugin.java.fix	2012-04-24 18:03:48.000000000 -0400
++++ ./org.eclipse.linuxtools.cdt.libhover/src/org/eclipse/linuxtools/cdt/libhover/LibhoverPlugin.java	2012-04-24 18:07:24.000000000 -0400
+@@ -44,7 +44,7 @@ public class LibhoverPlugin extends Abst
+ 	/**
+ 	 * The constructor
+ 	 */
+-	private LibhoverPlugin() {
++	public LibhoverPlugin() {
+ 	}
+ 
+ 	/*

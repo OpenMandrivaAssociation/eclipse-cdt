@@ -1,0 +1,35 @@
+diff -up ./pom.xml.fix ./pom.xml
+--- ./pom.xml.fix	2014-09-18 18:03:05.718999013 -0400
++++ ./pom.xml	2014-09-18 18:05:39.233561691 -0400
+@@ -208,13 +208,13 @@
+ 		<module>remote/org.eclipse.cdt.remote.core</module>
+ 		<module>remote/org.eclipse.cdt.remote-feature</module>
+ 		
++<!-- 
+ 		<module>launch/org.eclipse.cdt.launchbar.core</module>
+ 		<module>launch/org.eclipse.cdt.launchbar.ui</module>
+ 		<module>launch/org.eclipse.cdt.launchbar.cdt.core</module>
+ 		<module>launch/org.eclipse.cdt.launchbar-feature</module>
+ 	    <module>launch/org.eclipse.cdt.launchbar.core.tests</module>
+ 
+-<!-- 
+ 		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
+ 		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>
+ 		<module>xlc/org.eclipse.cdt.core.lrparser.xlc.tests</module>
+diff -up ./releng/org.eclipse.cdt.testing-feature/feature.xml.fix ./releng/org.eclipse.cdt.testing-feature/feature.xml
+--- ./releng/org.eclipse.cdt.testing-feature/feature.xml.fix	2014-09-18 18:26:48.912765297 -0400
++++ ./releng/org.eclipse.cdt.testing-feature/feature.xml	2014-09-18 18:27:02.023991362 -0400
+@@ -70,13 +70,6 @@
+          unpack="false"/>
+ 
+    <plugin
+-         id="org.eclipse.cdt.launchbar.core.tests"
+-         download-size="0"
+-         install-size="0"
+-         version="0.0.0"
+-         unpack="false"/>
+-
+-   <plugin
+          id="org.eclipse.cdt.tests.dsf.gdb"
+          download-size="0"
+          install-size="0"

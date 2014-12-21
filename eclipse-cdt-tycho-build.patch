@@ -1,8 +1,7 @@
-diff --git a/pom.xml b/pom.xml
-index dd54c31..22c0ceb 100644
---- a/pom.xml
-+++ b/pom.xml
-@@ -220,46 +210,6 @@
+diff -up ./pom.xml.orig ./pom.xml
+--- ./pom.xml.orig	2014-06-26 17:12:19.158965411 -0400
++++ ./pom.xml	2014-06-26 17:14:21.166990242 -0400
+@@ -345,46 +345,6 @@
  							<ws>gtk</ws>
  							<arch>x86</arch>
  						</environment>
@@ -47,5 +46,5 @@ index dd54c31..22c0ceb 100644
 -							<arch>sparc</arch>
 -						</environment>
  					</environments>
- 				</configuration>
- 			</plugin>
+ 					<target>
+ 						<artifact>
