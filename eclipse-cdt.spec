@@ -29,7 +29,7 @@ Epoch: 1
 Summary:        Eclipse C/C++ Development Tools (CDT) plugin
 Name:           %{?scl_prefix}eclipse-cdt
 Version:        %{majmin}.%{micro}
-Release:        3.2
+Release:        3.3
 License:        EPL and CPL
 Group:          Development/Java
 URL:            http://www.eclipse.org/cdt
