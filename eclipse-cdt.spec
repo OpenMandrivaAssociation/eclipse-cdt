@@ -32,7 +32,7 @@ Version:        %{majmin}.%{micro}
 Release:        3.3
 License:        EPL and CPL
 Group:          Development/Java
-URL:            http://www.eclipse.org/cdt
+URL:            https://www.eclipse.org/cdt
 Requires:       eclipse-platform
 
 Source0: http://git.eclipse.org/c/cdt/org.eclipse.cdt.git/snapshot/%{cdt_snapshot}.tar.bz2
