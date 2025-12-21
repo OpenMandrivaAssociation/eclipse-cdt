@@ -85,6 +85,7 @@ Patch10: %{pkg_name}-target.patch
 # Following removes experimental launchbar feature from build
 Patch11: %{pkg_name}-remove-launchbar.patch
 
+BuildRequires:	make
 BuildRequires: tycho
 BuildRequires: tycho-extras
 BuildRequires: %{?scl_prefix}eclipse-pde >= 1:4.3.0
